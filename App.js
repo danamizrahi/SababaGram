@@ -4,13 +4,16 @@ import {
     Text,
     View,
     Button,
-    Image,StyleSheet
+    Image, StyleSheet, Alert, Linking
 } from 'react-native';
-import {StackNavigator} from 'react-navigation';
+import { createStore } from 'redux';
+import devToolsEnhancer from 'remote-redux-devtools';
+import rootReducer from './reducers';
+import {Provider} from 'react-redux';
+import {StackNavigator,addNavigationHelpers,NavigationActions} from 'react-navigation';
 import ChatScreen from './Component/Form';
-import List from './Component/ListScreen';
+import InstagramLogin from './Component/InstagramLogin';
 import DataScreen from './Component/DataScreen';
-
 const styles = StyleSheet.create({
     photo: {
         height: 40,
@@ -18,32 +21,39 @@ const styles = StyleSheet.create({
         borderRadius: 20,
     },
 });
+const store = createStore(rootReducer, devToolsEnhancer());
+
 
 class HomeScreen extends React.Component {
     static navigationOptions = {
         title: 'Welcome',
     };
 
-    render() {
-        const { navigate } = this.props.navigation;
-        return (
-            <View>
 
-                <Text>Hello, Chat App!</Text>
-                <Button
-                    onPress={() => navigate('ListView')}
-                    title="Chat with Lucy"
-                />
-            </View>)
+    render() {
+        const {navigate} = this.props.navigation;
+        return (
+            <Provider store={store}>
+                <View>
+
+                    <Text>Hello, Chat App!</Text>
+                    <Button
+                        onPress={() => navigate('InstagramLogin',{store})}
+                        title="Login to Instagram"
+                    />
+                </View>
+            </Provider>)
     }
+
 }
 
 const SimpleApp = StackNavigator({
     Home: {screen: HomeScreen},
-    ListView: {screen: List},
+    InstagramLogin: {screen: InstagramLogin},
     Form: {screen: ChatScreen},
     DataScreen: {screen: DataScreen}
 
 });
+
 
 AppRegistry.registerComponent('AwesomeProject', () => SimpleApp);
